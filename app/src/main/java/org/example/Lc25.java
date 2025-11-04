@@ -3,53 +3,58 @@ package org.example;
 import java.util.List;
 
 public class Lc25 {
-    public ListNode reverseKGroup(ListNode head, int k) {
-        if (k <= 1) return head;
-        ListNode res = new ListNode();
-        ListNode now = res;
 
-        int cnt = 0;
+    public ListNode getLast(ListNode head) {
+        ListNode tmp = head;
+
+        while(tmp.next != null){
+            tmp = tmp.next;
+        }
+        return tmp;
+    }
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+
+        ListNode res = new ListNode();
         ListNode termHead = head;
-        ListNode termTail = head;
-        while(head != null){
+        head = head.next;
+        int cnt = 1;
+
+        while(head != null) {
             cnt++;
-            if (cnt == k) {
-                termTail = head;
+            if (cnt%k==0){
+                ListNode termTail = head;
                 head = head.next;
                 termTail.next = null;
 
-                ListNode tmp = termHead.next;
-                ListNode nextTmp = tmp;
-                termHead.next = null;
+                ListNode p0 = termHead;
+                ListNode p1 = termHead.next;
+                p0.next = null;
 
-                while(tmp != termTail){
-                    nextTmp = tmp.next;
-                    tmp.next = termHead;
+                while (p1!=termTail) {
+                    ListNode p2 = p1.next;
+                    p1.next = p0;
+                    p0 = p1;
+                    p1 = p2;
+                }
+                p1.next = p0;
 
-                    termHead = tmp;
-                    tmp = nextTmp;
-                }
-                termTail.next = termHead;
-                System.out.println();
-                now = res;
-                while(now.next != null) {
-                    now = now.next;
-                }
-                now.next = termTail;
+                getLast(res).next = p1;
 
                 termHead = head;
-                cnt = 0;
+                if (head == null) {
+                    break;
+                }
+                head = head.next;
+                cnt = 1;
                 continue;
             }
-
             head = head.next;
         }
-        now = res;
-        while(now.next != null) {
-            now = now.next;
-        }
-        now.next = termHead;
 
+        getLast(res).next = termHead;
         return res.next;
     }
 }
